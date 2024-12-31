@@ -1,28 +1,12 @@
 <?php
 include 'conn.php';
 
-// Validate and retrieve ID from URL
-if (isset($_GET['id']) && !empty($_GET['id']) && is_numeric($_GET['id'])) {
+if (isset($_GET['id'])) {
     $id = $_GET['id'];
-
-    // Fetch the user data
-    $stmt = $conn->prepare("SELECT * FROM users WHERE id = ?");
-    $stmt->bind_param("i", $id);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    $result = $conn->query("SELECT * FROM users WHERE id = $id");
     $user = $result->fetch_assoc();
-    $stmt->close();
-
-    if (!$user) {
-        echo "User not found!";
-        exit;
-    }
-} else {
-    echo "No ID provided!";
-    exit;
 }
 
-// Handle form submission
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $id = $_POST['id'];
     $name = $_POST['name'];
@@ -36,16 +20,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->bind_param("sssissi", $name, $email, $phone, $age, $gender, $address, $id);
 
     if ($stmt->execute()) {
-        header("Location: read.php?message=Record updated successfully");
-        exit;
+        echo "<div class='alert alert-success text-center'>Record updated successfully!</div>";
     } else {
-        echo "Error updating record: " . $stmt->error;
+        echo "<div class='alert alert-danger text-center'>Error: " . $stmt->error . "</div>";
     }
 
     $stmt->close();
     $conn->close();
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -62,24 +46,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <h2>Update User</h2>
             </div>
             <div class="card-body">
-                <form method="POST" action="update.php">
+                <form method="POST" action="">
                     <input type="hidden" name="id" value="<?php echo $user['id']; ?>">
+                    
+                    <!-- Name -->
                     <div class="mb-3">
                         <label for="name" class="form-label">Name</label>
                         <input type="text" id="name" name="name" class="form-control" value="<?php echo $user['name']; ?>" required>
                     </div>
+
+                    <!-- Email -->
                     <div class="mb-3">
                         <label for="email" class="form-label">Email</label>
                         <input type="email" id="email" name="email" class="form-control" value="<?php echo $user['email']; ?>" required>
                     </div>
+
+                    <!-- Phone -->
                     <div class="mb-3">
                         <label for="phone" class="form-label">Phone</label>
                         <input type="text" id="phone" name="phone" class="form-control" value="<?php echo $user['phone']; ?>" required>
                     </div>
+
+                    <!-- Age -->
                     <div class="mb-3">
                         <label for="age" class="form-label">Age</label>
                         <input type="number" id="age" name="age" class="form-control" value="<?php echo $user['age']; ?>" required>
                     </div>
+
+                    <!-- Gender -->
                     <div class="mb-3">
                         <label for="gender" class="form-label">Gender</label>
                         <select id="gender" name="gender" class="form-select" required>
@@ -88,13 +82,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <option value="Other" <?php echo ($user['gender'] == 'Other') ? 'selected' : ''; ?>>Other</option>
                         </select>
                     </div>
+
+                    <!-- Address -->
                     <div class="mb-3">
                         <label for="address" class="form-label">Address</label>
-                        <textarea id="address" name="address" rows="3" class="form-control" required><?php echo $user['address']; ?></textarea>
+                        <textarea id="address" name="address" class="form-control" rows="3" required><?php echo $user['address']; ?></textarea>
                     </div>
+
+                    <!-- Buttons -->
                     <div class="d-flex justify-content-between">
                         <button type="submit" class="btn btn-primary">Update</button>
-                        <button type="button" onclick="window.location.href='read.php'" class="btn btn-secondary">Cancel</button>
+                        <button type="button" class="btn btn-secondary" onclick="window.location.href='read.php'">Cancel</button>
                     </div>
                 </form>
             </div>
