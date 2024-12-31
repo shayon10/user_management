@@ -1,3 +1,9 @@
+<?php
+include 'conn.php';
+
+$result = $conn->query("SELECT id, name, email, phone, age, gender, address FROM users");
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,8 +12,6 @@
     <title>View Users</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- DataTables CSS -->
-    <link href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css" rel="stylesheet">
 </head>
 <body class="bg-light">
     <div class="container mt-5">
@@ -16,8 +20,8 @@
                 <h2>User Records</h2>
             </div>
             <div class="card-body">
-                <table id="usersTable" class="table table-striped">
-                    <thead>
+                <table class="table table-bordered table-striped">
+                    <thead class="table-dark">
                         <tr>
                             <th>ID</th>
                             <th>Name</th>
@@ -31,10 +35,8 @@
                     </thead>
                     <tbody>
                         <?php
-                        include 'conn.php';
-                        $result = $conn->query("SELECT id, name, email, phone, age, gender, address FROM users");
                         if ($result->num_rows > 0) {
-                            while($row = $result->fetch_assoc()) {
+                            while ($row = $result->fetch_assoc()) {
                                 echo "<tr>
                                         <td>{$row['id']}</td>
                                         <td>{$row['name']}</td>
@@ -44,11 +46,13 @@
                                         <td>{$row['gender']}</td>
                                         <td>{$row['address']}</td>
                                         <td>
-                                            <button class='btn btn-warning btn-sm' onclick=\"window.location.href='update.php?id={$row['id']}'\">Edit</button>
-                                            <button class='btn btn-danger btn-sm' onclick=\"window.location.href='delete.php?id={$row['id']}'\">Delete</button>
+                                            <a href='update.php?id={$row['id']}' class='btn btn-warning btn-sm'>Edit</a>
+                                            <a href='delete.php?id={$row['id']}' class='btn btn-danger btn-sm'>Delete</a>
                                         </td>
                                     </tr>";
                             }
+                        } else {
+                            echo "<tr><td colspan='8' class='text-center'>No records found.</td></tr>";
                         }
                         ?>
                     </tbody>
@@ -57,14 +61,5 @@
             </div>
         </div>
     </div>
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- DataTables JS -->
-    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            $('#usersTable').DataTable();
-        });
-    </script>
 </body>
 </html>
