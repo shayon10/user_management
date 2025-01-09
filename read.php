@@ -1,7 +1,7 @@
 <?php
 include 'conn.php';
 
-$result = $conn->query("SELECT id, name, email, phone, age, gender, address FROM users");
+$result = $conn->query("SELECT id, name, email, phone, age, gender, address, profile_picture FROM users");
 
 ?>
 <!DOCTYPE html>
@@ -10,7 +10,7 @@ $result = $conn->query("SELECT id, name, email, phone, age, gender, address FROM
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View Users</title>
-    <!-- Bootstrap CSS -->
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="bg-light">
@@ -30,6 +30,7 @@ $result = $conn->query("SELECT id, name, email, phone, age, gender, address FROM
                             <th>Age</th>
                             <th>Gender</th>
                             <th>Address</th>
+                            <th>Profile Picture</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -45,6 +46,7 @@ $result = $conn->query("SELECT id, name, email, phone, age, gender, address FROM
                                         <td>{$row['age']}</td>
                                         <td>{$row['gender']}</td>
                                         <td>{$row['address']}</td>
+                                        <td><img src='{$row['profile_picture']}' alt='Profile Picture' width='50'></td>
                                         <td>
                                             <a href='update.php?id={$row['id']}' class='btn btn-warning btn-sm'>Edit</a>
                                             <a href='delete.php?id={$row['id']}' class='btn btn-danger btn-sm'>Delete</a>
@@ -52,7 +54,7 @@ $result = $conn->query("SELECT id, name, email, phone, age, gender, address FROM
                                     </tr>";
                             }
                         } else {
-                            echo "<tr><td colspan='8' class='text-center'>No records found.</td></tr>";
+                            echo "<tr><td colspan='9' class='text-center'>No records found.</td></tr>";
                         }
                         ?>
                     </tbody>
